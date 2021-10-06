@@ -17,27 +17,27 @@
 
 ## Formas de resposta:
 
-### fonte de obtenção dos dados | apresentação do trabalho
+### Fonte de obtenção dos dados | apresentação do trabalho
 
-### mapa do brasil com (região ou bioma a partir de seleção / bioma, região, espécies, risco, fatores como tooltip / (?) ):
--- quantidade de espécies em extinção por região/bioma
--- graus de risco por região/bioma
--- fatores de risco por região/bioma
+### Mapa do brasil com (região ou bioma a partir de seleção / bioma, região, espécies, risco, fatores como tooltip / (?) ):
+-- Quantidade de espécies em extinção por região/bioma
+-- Graus de risco por região/bioma
+-- Fatores de risco por região/bioma
 
-### página dedicada a mostrar o wikipedia a partir da seleção da espécie (widget)
--- filtro de espécie a partir de: grupo, grau de risco
--- padrao: https://pt.wikipedia.org/wiki/especie_completa
+### Página dedicada a mostrar o wikipedia a partir da seleção da espécie (widget)
+-- Filtro de espécie a partir de: grupo, grau de risco
+-- Padrao: https://pt.wikipedia.org/wiki/especie_completa
 
 ### Gráficos/tabelas correspondentes das descritivas
--- definir seletores
+-- Definir seletores
 -- Bioma, espécies, fatores de risco, graus de risco
 
 ### Testes de hipótese
--- comparativos em relação a: regiao/bioma com maior escore de extinção
--- comparativos de fatores de risco por regiao/bioma/grupo
--- comparativos de fatores de risco por escore de extinção, dentro de uma região/bioma (?)
+-- Comparativos em relação a: regiao/bioma com maior escore de extinção
+-- Comparativos de fatores de risco por regiao/bioma/grupo
+-- Comparativos de fatores de risco por escore de extinção, dentro de uma região/bioma (?)
 
 ### Série histórica?
 -- Barras empilhadas para cada ano com quantidade de espécies em grau de ameaça?
--- seletor de ano para todo o painel?
+-- Seletor de ano para todo o painel?
 

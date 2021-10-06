@@ -31,6 +31,7 @@
 ### Gráficos/tabelas correspondentes das descritivas
 - Definir seletores
 - Bioma, espécies, fatores de risco, graus de risco
+- grafico filogenia das especies com seletor; incluir grupo e grupão
 
 ### Testes de hipótese
 - Comparativos em relação a: regiao/bioma com maior escore de extinção

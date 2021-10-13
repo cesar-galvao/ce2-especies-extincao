@@ -1,49 +1,48 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
+library(shinydashboard)
 library(shiny)
 
-# Define UI for application that draws a histogram
-ui <- fluidPage(
 
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
+# inserir série histórica?
 
-    # Sidebar with a slider input for number of bins 
-    sidebarLayout(
-        sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
-        ),
+#triggers de avisos para entrada em cada aba. Como notificar cada vez que abre uma aba nova?
 
-        # Show a plot of the generated distribution
-        mainPanel(
-           plotOutput("distPlot")
-        )
+header <- dashboardHeader(
+  dropdownMenu(
+    type = "notifications",
+    notificationItem(
+      text = "Verifique o menu lateral!"
     )
+  )
+) 
+sidebar <- dashboardSidebar(
+  sidebarMenu(
+    # Create two `menuItem()`s, "Dashboard" and "Inputs"
+    menuItem("Apresentação", tabName = "apresentacao"),
+    menuItem("Mapa", tabName = "mapa"),
+    menuItem("Comparações", tabName = "testes-hip"), #testes de hipotese
+    menuItem("Busca de espécie", tabName = "wiki"),
+    menuItem("Banco de dados", tabName = "database") #dizer de onde vem, mostrar em tabela
+  )
 )
 
-# Define server logic required to draw a histogram
-server <- function(input, output) {
+body <- dashboardBody(
+  tabItems(
+    # Add two tab items, one with tabName "dashboard" and one with tabName "inputs"
+    tabItem(tabName = "apresentacao"),
+    tabItem(tabName = "mapa"),
+    tabItem(tabName = "testes-hip"),
+    tabItem(tabName = "wiki"),
+    tabItem(tabName = "database")
+  )
+)
 
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
 
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    })
-}
+# Create the UI using the header, sidebar, and body
+ui <- dashboardPage(header = header,
+                    sidebar = sidebar,
+                    body = body
+)
 
-# Run the application 
-shinyApp(ui = ui, server = server)
+server <- function(input, output) {}
+
+shinyApp(ui, server)

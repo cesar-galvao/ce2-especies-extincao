@@ -1,7 +1,8 @@
 library(shinydashboard)
 library(shiny)
+library(tidyverse)
 
-
+data <- read.csv("./data/especies_2020_pronto.csv")
 # inserir série histórica?
 
 #triggers de avisos para entrada em cada aba. Como notificar cada vez que abre uma aba nova?
@@ -31,7 +32,8 @@ body <- dashboardBody(
     tabItem(tabName = "apresentacao"),
     tabItem(tabName = "mapa"),
     tabItem(tabName = "testes-hip"),
-    tabItem(tabName = "wiki"),
+    tabItem(tabName = "wiki", #incluir filtro para grupo, categoria ameaca, bioma em caixa superior
+            htmlOutput("wiki_page")),
     tabItem(tabName = "database")
   )
 )
@@ -43,6 +45,8 @@ ui <- dashboardPage(header = header,
                     body = body
 )
 
-server <- function(input, output) {}
+server <- function(input, output) {
+  
+}
 
 shinyApp(ui, server)

@@ -17,17 +17,14 @@ data <- readRDS("../data/especies_2020_pronto.RDS") %>%
 
 original <- readRDS("../data/tratado_nao_sep.RDS")
 
-# inserir série histórica?
 
-#input de lista
-#página com endereço reactive
-
-#triggers de avisos para entrada em cada aba. Como notificar cada vez que abre uma aba nova?
+# clonar repositorio: https://github.com/cesar-galvao/ce2-especies-extincao/archive/refs/heads/main.zip
+# dados limpos, mas agregados: https://github.com/cesar-galvao/ce2-especies-extincao/raw/main/data/tratado_nao_sep.RDS
 
 
 # COMPONENTES DO UI ----
 
-header <- dashboardHeader( title = "Visualização de expécies em extinção",
+header <- dashboardHeader(title = "Dash CE2",
   dropdownMenu(
     type = "notifications",
     notificationItem(
@@ -54,6 +51,8 @@ sidebar <- dashboardSidebar(
 )
 
 body <- dashboardBody(
+  tags$head(tags$style(HTML('.box {margin: 10px;}'
+  ))),
   tabItems(
     # Add two tab items, one with tabName "dashboard" and one with tabName "inputs"
     tabItem(tabName = "apresentacao"),
@@ -66,11 +65,14 @@ body <- dashboardBody(
     ),
     tabItem(tabName = "wiki_page", htmlOutput("wiki_page")),
     tabItem(tabName = "database",
-            fluidRow(
-              box(title = "Dados agregados", solidHeader = TRUE, width = "6",
+              box(title = "Recursos", width = "3", solidHeader = TRUE,
+                  actionButton(inputId = "dload_dados", label = "Dados limpos", icon = icon("download"),
+                               onclick ="window.open('https://github.com/cesar-galvao/ce2-especies-extincao/raw/main/data/tratado_nao_sep.RDS', '_blank')"),
+                  actionButton(inputId = "our_repo", label = "Nosso repositório", icon = icon("github"),
+                               onclick ="window.open('https://github.com/cesar-galvao/ce2-especies-extincao', '_blank')")),
+              box(title = "Dados agregados", solidHeader = TRUE, width = "11",
                   DT::dataTableOutput("table"))
               )
-    )
   )
 )
 
@@ -146,7 +148,8 @@ server <- function(input, output) {
     return(tags$iframe(src = x, 
                        style="width:100%;",  frameborder="0",
                        id="iframe",
-                       height = "500px"))
+                       height = "720px"
+                       ))
   }
   output$wiki_page<-renderUI({
     getPage(especie_link())
@@ -157,7 +160,11 @@ server <- function(input, output) {
   output$table <- DT::renderDataTable({
     original%>%
       select(fauna_flora, grupo, familia, especie_simplificado, sigla_categoria_de_ameaca,
-             bioma, principais_ameacas)
+             bioma, principais_ameacas) %>%
+      DT::datatable(rownames = TRUE,
+                    extensions = 'Buttons',
+                    options = list(
+                      autoWidth = FALSE, scrollX = TRUE))
   })
   # output$table <- renderTable({
   #     tabela <- original%>%

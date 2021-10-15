@@ -3,7 +3,9 @@ library(shiny)
 library(tidyverse)
 
 
-data <- readRDS("../data/especies_2020_pronto.RDS")
+data <- readRDS("../data/especies_2020_pronto.RDS") %>%
+  filter(fauna_flora != "")
+
 # inserir série histórica?
 
 #input de lista
@@ -25,8 +27,14 @@ sidebar <- dashboardSidebar(
     menuItem("Apresentação", tabName = "apresentacao"),
     menuItem("Mapa", tabName = "mapa"),
     menuItem("Comparações", tabName = "testes-hip"), #testes de hipotese
-    menuItem("Busca de espécie", tabName = "wiki",
-             selectInput("filtro1", ) #selecao dos filtros
+    menuItem("Busca de espécie", tabName = "wiki",icon = icon("globe-americas"),
+             radioButtons("fauna_flora", label = "Fauna ou Flora", choices = c("Fauna", "Flora"), selected = "Fauna"),
+             uiOutput("out_bioma"),
+             uiOutput("ameaca"),
+             uiOutput("grupo"),
+             uiOutput("especie")
+             
+             #opcoes tem que ser todos do busca especie + Todos
              
     ),
     menuItem("Banco de dados", tabName = "database") #dizer de onde vem, mostrar em tabela
@@ -58,21 +66,92 @@ ui <- dashboardPage(header = header,
 
 server <- function(input, output) {
   
-  # processamento dos filtros
   
-  #gera html pra usar no getPage
+
+# Pagina wiki ----
+  output$out_bioma <- renderUI({})
+  outputOptions(output, "out_bioma", suspendWhenHidden = FALSE)
+  
+  #filtered data
+  busca_especie <- reactive({
+    filter(data,
+           fauna_flora == input$fauna_flora,
+           grupo %in% grupo(),
+           bioma %in% bioma(),
+           principais_ameacas %in% principal_ameaca())
+  })
+  
+  # get filter from inputs
+  grupo <- reactive({
+    if (input$grupo == "Todos") unique(data$grupo) else input$grupo
+  })
+  bioma <- reactive({
+    if (input$bioma == "Todos") unique(data$bioma) else input$bioma
+  })
+  principal_ameaca <- reactive({
+    if (input$ameaca == "Todas") unique(data$principais_ameacas) else input$ameaca
+  })
+  
+  #get available categories
+  var_grupo <- reactive({
+    filter(busca_especie, grupo %in% grupo()) %>% 
+      pull(Country) %>% 
+      unique()
+  })
+  var_bioma <- reactive({
+    filter(busca_especie, bioma %in% bioma()) %>% 
+      pull(Country) %>% 
+      unique()
+  })
+  var_ameaca <- reactive({
+    filter(busca_especie, principais_ameacas %in% principal_ameaca()) %>% 
+      pull(Country) %>% 
+      unique()
+  })
+
+  var_especie <- reactive({
+    busca_especie %>% 
+      pull(especie_simplificado) %>% 
+      unique()
+  })
+  
+  # gerando opcoes de output
+  output$out_bioma <- renderUI({
+    selectInput(inputId = "bioma", label = "Bioma", choices = c("Todos", var_bioma()), selected = "Todos")
+  })
+
+  output$ameaca <- renderUI({
+    selectInput("ameaca", label = "Principal ameaça", choices = c("Todas", var_ameaca()), selected = "Todas")
+  })
+  
+  output$grupo <- renderUI({
+    selectInput("grupo", label = "Grupo", choices = c("Todos", var_grupo()), selected =  "Todos")
+  })
+  
+  output$especie <- renderUI({
+    selectInput("especie", label = "Espécie", choices = c(var_especie()))
+  })
+  
+  
+  #gera html pra usar no getPage com base no var_especie
+  
+  especie_link <- reactive ({
+    paste("https://pt.wikipedia.org/wiki/", 
+          str_replace_all(input$especie, pattern = " ", replacement = "_"),
+          sep = "")
+  })
   
   #gerar link com base nos inputs
   getPage<-function() {
-    return(tags$iframe(src = "https://en.wikipedia.org/wiki/Cognitive_bias"
+    return(tags$iframe(src = especie_link()
                        , style="width:100%;",  frameborder="0"
                        ,id="iframe"
                        , height = "500px"))
   }
   output$wiki_page<-renderUI({
-    x <- input$test
     getPage()
   })
+  
 }
 
 shinyApp(ui, server)

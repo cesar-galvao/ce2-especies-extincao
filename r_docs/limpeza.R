@@ -88,20 +88,28 @@ especies_2020_pronto <- map_df(especies_2020_pronto, str_squish)
 
 final <- especies_2020_pronto %>% #edixar explicitas as separacoes
   clean_names()%>%
-  mutate(estados_de_ocorrencia = str_remove_all(estados_de_ocorrencia, pattern = "[:punct:]")) %>%
+  mutate(estados_de_ocorrencia = str_remove_all(estados_de_ocorrencia, pattern = "[:punct:]"),
+         bioma = str_replace(bioma, "Caatinga Cerrado", "Caatinga, Cerrado")) %>%
   separate_rows(bioma, sep = ", ") %>% 
   separate_rows(bioma, sep = " , ") %>%
-  separate_rows(bioma, sep = ". ") %>%
+  separate_rows(bioma, sep = "\\. ") %>%
   separate_rows(principais_ameacas, sep = ", ") %>% 
   separate_rows(principais_ameacas, sep = " , ") %>%
   separate_rows(principais_ameacas, sep = "\\. ") %>%
-  separate_rows(estados_de_ocorrencia, sep = " ")
+  separate_rows(estados_de_ocorrencia, sep = " ") %>%
+  mutate(bioma = str_remove_all(bioma, pattern = "[:punct:]"))
 
 
 # outras atividades economicas: remover termo, dividir linhas
 
 saveRDS(final, './data/especies_2020_pronto.RDS')
 write.csv(final, './data/especies_2020_pronto.csv')
+
+especies_2020_pronto %>%
+  clean_names()%>%
+  mutate(estados_de_ocorrencia = str_remove_all(estados_de_ocorrencia, pattern = "[:punct:]"),
+         bioma = str_replace(bioma, "Caatinga Cerrado", "Caatinga, Cerrado")) %>%
+  saveRDS('./data/tratado_nao_sep.RDS')
 
 
 rm(cobra_df, data, data2, especies_2020_limpo, especies_2020_pronto, repo, cobra,

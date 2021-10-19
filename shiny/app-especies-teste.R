@@ -7,8 +7,7 @@ library(DT)
 
 # PROBLEMAS ----
 
-# 1. Se tiver botoes de filtro no busca de especie, nao renderiza html
-# 2. uiOutput nao renderiza os filtros realizados no reactive server
+# alinhamento e distancia entre botoes
 
 #---------------------------------#
 
@@ -16,10 +15,6 @@ data <- readRDS("../data/especies_2020_pronto.RDS") %>%
   filter(fauna_flora != "")
 
 original <- readRDS("../data/tratado_nao_sep.RDS")
-
-
-# clonar repositorio: https://github.com/cesar-galvao/ce2-especies-extincao/archive/refs/heads/main.zip
-# dados limpos, mas agregados: https://github.com/cesar-galvao/ce2-especies-extincao/raw/main/data/tratado_nao_sep.RDS
 
 
 # COMPONENTES DO UI ----
@@ -36,42 +31,46 @@ sidebar <- dashboardSidebar(
   sidebarMenu(
     # Create two `menuItem()`s, "Dashboard" and "Inputs"
     menuItem("Apresentação", tabName = "apresentacao"),
-    menuItem("Mapa", tabName = "mapa"),
-    menuItem("Comparações", tabName = "testes-hip"), #testes de hipotese
-    menuItem("Busca de espécie", tabName = "search",icon = icon("search"),
+
+    menuItem("Filtros do dashboard", tabName = "search",icon = icon("search"),
              radioButtons("fauna_flora", label = "Fauna ou Flora", choices = c("Fauna", "Flora"), selected = "Fauna"),
              uiOutput("out_bioma"),
              uiOutput("out_grupo"),
              uiOutput("especie")
              
     ),
+    menuItem("Mapa", tabName = "mapa"), #bioma ou estado: 
+      #painel mapa com: quantidade de espécies fauna/flora,
+      #principais ameaças
+      #tabela lateral com quantidade de espécies, pelo filtro geral, em cada categoria de risco
+    menuItem("Comparações", tabName = "testes-hip"), #testes de hipotese
     menuItem("Página Wiki", tabName = "wiki_page",icon = icon("globe-americas")), #dizer de onde vem, mostrar em tabela
-    menuItem("Banco de dados", tabName = "database",icon = icon("table"))
+    menuItem("Banco de dados", tabName = "database",icon = icon("table")),
+    menuItem("Recursos", tabName = "recursos", icon = icon("cog"),
+             actionButton(inputId = "dload_dados", label = "Dados limpos", icon = icon("download"),
+                          onclick ="window.open('https://github.com/cesar-galvao/ce2-especies-extincao/raw/main/data/tratado_nao_sep.RDS', '_blank')"),
+             actionButton(inputId = "our_repo", label = "Nosso repositório", icon = icon("github"),
+                          onclick ="window.open('https://github.com/cesar-galvao/ce2-especies-extincao', '_blank')"))
   )
 )
 
 body <- dashboardBody(
-  tags$head(tags$style(HTML('.box {margin: 10px;}'
+  tags$head(tags$style(HTML('.box {margin: 25px;}'
   ))),
   tabItems(
     # Add two tab items, one with tabName "dashboard" and one with tabName "inputs"
     tabItem(tabName = "apresentacao"),
-    tabItem(tabName = "mapa"),
-    tabItem(tabName = "testes-hip"),
     tabItem(tabName = "search"#,
             #Caixa com menu dos filtros para grupo, categoria ameaca, bioma em caixa superior
             #htmlOutput("wiki_page")
             
     ),
+    tabItem(tabName = "mapa"),
+    tabItem(tabName = "testes-hip"),
     tabItem(tabName = "wiki_page", htmlOutput("wiki_page")),
     tabItem(tabName = "database",
-              box(title = "Recursos", width = "3", solidHeader = TRUE,
-                  actionButton(inputId = "dload_dados", label = "Dados limpos", icon = icon("download"),
-                               onclick ="window.open('https://github.com/cesar-galvao/ce2-especies-extincao/raw/main/data/tratado_nao_sep.RDS', '_blank')"),
-                  actionButton(inputId = "our_repo", label = "Nosso repositório", icon = icon("github"),
-                               onclick ="window.open('https://github.com/cesar-galvao/ce2-especies-extincao', '_blank')")),
-              box(title = "Dados agregados", solidHeader = TRUE, width = "11",
-                  DT::dataTableOutput("table"))
+            title = "Dados agregados", solidHeader = TRUE, width = "11",
+                  DT::dataTableOutput("table")
               )
   )
 )

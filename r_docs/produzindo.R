@@ -5,7 +5,8 @@ library(ggplot2)
 library(janitor)
 
 #definindo diretório e baixando os dados 
-data <- data <-readRDS("especies_2020_pronto.RDS") 
+data <-readRDS("./data/especies_2020_pronto.RDS")%>%
+  filter(fauna_flora != "") #tinha uma linha toda vazia, mandei remover
 
 #vendo o banco de dados
 glimpse(data) 
@@ -18,6 +19,21 @@ ameaca <- data %>%
            sigla_categoria_de_ameaca == "CR PEX") %>%
   group_by(sigla_categoria_de_ameaca, especie_simplificado, nome_comum) %>%
   count()
+
+#-----------------------#
+
+#Aqui ocorreu a contagem de quantas vezes uma espécie aparece no nosso banco
+#que ja tem as espécies aparecendo múltiplas vezes
+#Minha sugestão, contando todas as categorias:
+
+ameaca <- data %>%
+  distinct(sigla_categoria_de_ameaca, especie_simplificado)%>%
+  group_by(sigla_categoria_de_ameaca)%>%
+  count()
+
+#-----------------------#
+
+
 
 ##### Quantidade de espécies em extinção por região/bioma ######
 extinto <- c("CR PEW", "EW", "CR PEX") 
@@ -36,6 +52,29 @@ bioma_analise_copia <- bioma_analise %>%
   group_by(sigla_categoria_de_ameaca, bioma) %>% #agrupar por bioma
   count() #ver a quantidade de extintos por bioma
 
+
+
+#-----------------------#
+
+# Como conversamos, nao acho ideal tratarmos tudo como extinto, já que são categorias
+# diferentes. Acho que podemos deixar com os nomes que realmente têm.
+# Achei legal o uso do recode, eu nao conhecia e vou começar a usar.
+# 
+# Acho que a melhor abordagem é parecida com a que vc usou abaixo, que é tb
+# parecida com a primeira que eu sugeri.
+
+grau_de_risco_bioma <- data %>%
+  distinct(bioma, sigla_categoria_de_ameaca, especie_simplificado)%>%
+  group_by(bioma, sigla_categoria_de_ameaca)%>%
+  count() %>%
+  arrange(bioma, desc(n))
+
+# Consegue pensar em uma sugestão de visualização pra isso?
+
+#-----------------------#
+
+
+
 #Graus de risco por região/bioma 
 grau_de_risco_bioma <- bioma_analise %>%
   group_by(bioma, sigla_categoria_de_ameaca) %>%
@@ -44,6 +83,16 @@ grau_de_risco_bioma <- bioma_analise %>%
 #explicação: pegou-se a função with e passou para os argumetnos o grau de risco e essa funçao opera
 #sob o primeiro argumento, e a operacao escolhida foi order: primeiro em bioma e depois n. 
 grau_de_risco_bioma[with(grau_de_risco_bioma, order(bioma, -n)),]
+
+
+
+#-----------------------#
+# Acho que o mesmo tipo de processamento pode ser feito para os fatores de risco.
+# O problema é processar como se cada linha do nosso banco fosse uma observação,
+# isso é, uma espécie. No nosso caso, observação nao é equivalente a uma espécie
+# única, mas no banco original sim.
+#-----------------------#
+
 
 #Fatores de risco por região/bioma
 

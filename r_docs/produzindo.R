@@ -17,7 +17,7 @@ ameaca <- data %>%
   filter(sigla_categoria_de_ameaca == "CR PEW"|
            sigla_categoria_de_ameaca == "EW"|
            sigla_categoria_de_ameaca == "CR PEX") %>%
-  group_by(sigla_categoria_de_ameaca, especie_simplificado, nome_comum) %>%
+  group_by(sigla_categoria_de_ameaca, especie_simplificado, nome_comum, especie_exclusiva_do_brasil) %>%
   count()
 
 #-----------------------#
@@ -49,9 +49,22 @@ bioma_analise$sigla_categoria_de_ameaca <- recode(bioma_analise$sigla_categoria_
 
 bioma_analise_copia <- bioma_analise %>%
   filter(sigla_categoria_de_ameaca == "Extinto") %>% #filtrar quem tá extinto
-  group_by(sigla_categoria_de_ameaca, bioma) %>% #agrupar por bioma
+  group_by(sigla_categoria_de_ameaca, bioma, especie_simplificado) %>% #agrupar por bioma
+  distinct(sigla_categoria_de_ameaca, especie_simplificado)%>%
+  ungroup()%>%
+  group_by(sigla_categoria_de_ameaca, bioma)%>%
   count() #ver a quantidade de extintos por bioma
 
+bioma_analise_copia %>%
+  ggplot(aes(x = bioma, y = n))+
+  geom_bar(stat = 'identity', fill = '#3c8dbc')+
+  labs(x = "", y = "")+
+  ylim(0,65)+
+  geom_text(aes(label = n), vjust = -.5)+
+  theme(panel.background = element_blank(),
+        panel.grid = element_blank(),
+        axis.ticks = element_blank(),
+        axis.text.y = element_blank())
 
 
 #-----------------------#
@@ -104,6 +117,16 @@ fatores_de_risco[with(fatores_de_risco, order(bioma, -n)),]
 
 #vendo o maior grau de risco por bioma
 fatores_de_risco %>%
+  group_by(bioma) %>%
+  top_n(1)
+
+
+
+nivel_de_protecao <- bioma_analise %>%
+  group_by(bioma, nivel_de_protecao_na_estrategia_nacional) %>%
+  count()
+
+nivel_de_protecao %>%
   group_by(bioma) %>%
   top_n(1)
 

@@ -1,0 +1,2 @@
+abrir o arquivo Rproject
+rodar o painel

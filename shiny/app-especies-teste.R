@@ -14,16 +14,9 @@ library(plotly)
 #---------------------------------#
 
 data <- readRDS("../data/especies_2020_pronto.RDS") %>%
-  filter(fauna_flora != "")%>%
-  mutate(name_biome = bioma,
-         name_biome = if_else(name_biome == "Ilha oceanica", "Sistema Costeiro", name_biome),
-         name_biome = if_else(name_biome == "Marinho", "Sistema Costeiro", name_biome))
+  filter(fauna_flora != "")
 
 original <- readRDS("../data/tratado_nao_sep.RDS")
-
-biomas <- read_biomes()
-
-
 
 
 # ameacas <- data %>% 
@@ -69,15 +62,14 @@ sidebar <- dashboardSidebar(
     # Create two `menuItem()`s, "Dashboard" and "Inputs"
     menuItem("Apresentação", tabName = "apresentacao", icon = icon("file-alt")),
 
-    menuItem("Filtros do dashboard", tabName = "search",icon = icon("search"),
+    menuItem("Filtros do Wiki", tabName = "search",icon = icon("search"),
              radioButtons("fauna_flora", label = "Fauna ou Flora", choices = c("Fauna", "Flora"), selected = "Fauna"),
              uiOutput("out_bioma"),
              uiOutput("out_grupo"),
-             uiOutput("out_grupo_mapa"),
              uiOutput("especie")
              
     ),
-    menuItem("Mapa", tabName = "mapa", icon = icon("map-marker-alt")), #bioma ou estado: 
+    menuItem("Relatório", tabName = "relatorio", icon = icon("window-maximize")), #bioma ou estado: 
       #painel mapa com: quantidade de espécies fauna/flora,
       #principais ameaças
       #tabela lateral com quantidade de espécies, pelo filtro geral, em cada categoria de risco
@@ -103,18 +95,35 @@ body <- dashboardBody(
             #htmlOutput("wiki_page")
             
     ),
-    tabItem(tabName = "mapa", plotlyOutput("mapa")),
+    tabItem(tabName = "relatorio",
+            fluidRow(
+              textOutput("comentarios")
+            ),
+            fluidRow(
+              box(
+                width = 5, status = "info", solidHeader = TRUE,
+                title = "Espécies em extinção",
+                DT::dataTableOutput("table_ext")),
+              box(
+                width = 5, status = "info", solidHeader = TRUE,
+                title = "Extinções por bioma",
+                plotOutput("graf_ext"))
+              )
+            ),
     #tabItem(tabName = "testes-hip"),
     tabItem(tabName = "wiki_page", htmlOutput("wiki_page")),
     tabItem(tabName = "database",
             title = "Dados agregados", solidHeader = TRUE, width = "11",
                   DT::dataTableOutput("table")
               )
+    )
   )
-)
+
 ## apresentação ----
 # montar markdown em outro arquivo
 # includeMarkdown("include.md") na aba correspondente
+
+
 
 # Create the UI using the header, sidebar, and body
 ui <- dashboardPage(header = header,
@@ -127,6 +136,10 @@ ui <- dashboardPage(header = header,
 
 server <- function(input, output) {
 
+  output$comentarios <- renderText({
+    "Há 19 espécies registradas como possivelmente extintas (PEX) ou já extintos na natureza (EW).
+Dentre os 5 biomas brasileiros, o que mais tem ocorrência de animais em extinção é a Mata Atlântica e posteriormente o Cerrado. Além disso, há 19 espécies possivelmente extintos (PEX) ou já extintos (EX), sendo 17 espécies exclusivas do Brasil."
+  })
 
 ## Menu pagina wiki ----
   
@@ -175,84 +188,8 @@ server <- function(input, output) {
   })
   
   
-  ## mapa grupo de esp'ecie ----
-  
-  grupo_mapa <- reactive({
-    data %>%
-      pull(grupo) %>%
-      unique()#%>%
-      #c("Todos")
-  }) ######## juntar categorias sob PLANTAS ------- #
-  
-  output$out_grupo_mapa <- renderUI({
-    selectInput("in_grupo_mapa", label = "Grupo do mapa", choices = grupo_mapa())
-  })
-  
+ 
 
-
-
-output$mapa <- renderPlotly({
-  
-  #data
-  # if (input$in_grupo_mapa != "Todos"){
-    #no caso de filtrar grupo
-    data_grupo <- #reactive({
-      subset(
-        data, grupo == input$in_grupo_mapa
-      ) %>%
-      select(fauna_flora, grupo, familia, especie_simplificado, sigla_categoria_de_ameaca, bioma,
-             principais_ameacas, name_biome)%>%
-      group_by(name_biome, grupo, sigla_categoria_de_ameaca)%>%
-      summarise(n = n()) %>%
-      rename("sigla" = sigla_categoria_de_ameaca) %>%
-      ungroup()
-    
-    data_grupo <- left_join(biomas, data_grupo, by = "name_biome")
-  #   
-  #   #})
-  # } else { 
-  #   #no caso de nao filtrar grupo
-  #   data_grupo <- #reactive({
-  #     data%>%
-  #     select(fauna_flora, grupo, familia, especie_simplificado, sigla_categoria_de_ameaca, bioma,
-  #            principais_ameacas, name_biome, geom)%>%
-  #     group_by(grupo, sigla_categoria_de_ameaca, geom)%>%
-  #     summarise(n = n()) %>%
-  #     mutate(name_biome = "Todos")
-  #     #})
-  #   }
-  
-  #plot
-    mapa_bioma <- data_grupo %>% ggplot() + #geom_sf vem do pacote sf
-      geom_sf(aes(fill = name_biome), size = .1, color = "grey5")+
-      theme(panel.background = element_blank(),
-            panel.grid = element_blank(),
-            axis.text = element_blank(),
-            legend.position = "none",
-            axis.ticks = element_blank())
-    
-    ggplotly(mapa_bioma, tooltip = c("name_biome", "grupo", "sigla", "n"))
-    
-    })
-
-  #modelo de condicional ----
-  # output$table <- renderTable({
-  #   data <- gapminder
-  #   data <- subset(
-  #     data,
-  #     lifeExp >= input$life[1] & lifeExp <= input$life[2]
-  #   )
-  #   # Don't subset the data if "All" continent are chosen
-  #   if (input$continent != "All") {
-  #     data <- subset(
-  #       data,
-  #       continent == input$continent
-  #     )
-  #   }
-  #   data
-  # })
-
-  #gera html pra usar no getPage com base no var_especie
 
   
   ## pagina wiki ----
@@ -288,6 +225,51 @@ output$mapa <- renderPlotly({
                       autoWidth = FALSE, scrollX = TRUE))
   })
 
+  output$table_ext <- DT::renderDataTable({
+    data%>%
+      filter(fauna_flora != "")%>%
+      filter(sigla_categoria_de_ameaca == "CR PEW"|
+               sigla_categoria_de_ameaca == "EW"|
+               sigla_categoria_de_ameaca == "CR PEX") %>%
+      group_by(sigla_categoria_de_ameaca, especie_simplificado, nome_comum, especie_exclusiva_do_brasil) %>%
+      count() %>%
+      rename('Sigla ameaça' = sigla_categoria_de_ameaca, 'Espécie' = especie_simplificado,
+             'Autóctone' = especie_exclusiva_do_brasil, 'Nome Comum' = nome_comum) %>%
+      select(-n)%>%
+      DT::datatable(rownames = TRUE,
+                    extensions = 'Buttons',
+                    options = list(
+                      autoWidth = FALSE, scrollX = TRUE))
+  })
+  
+  output$graf_ext <- renderPlot({
+    extinto <- c("CR PEW", "EW", "CR PEX")
+
+    bioma_analise <- data
+    bioma_analise$sigla_categoria_de_ameaca <- recode(bioma_analise$sigla_categoria_de_ameaca,
+                                                      "CR PEW" = "Extinto", "EW" = "Extinto", "CR PEX" = "Extinto")
+
+    bioma_analise_copia <- bioma_analise %>%
+      filter(sigla_categoria_de_ameaca == "Extinto") %>% #filtrar quem tá extinto
+      group_by(sigla_categoria_de_ameaca, bioma, especie_simplificado) %>% #agrupar por bioma
+      distinct(sigla_categoria_de_ameaca, especie_simplificado)%>%
+      ungroup()%>%
+      group_by(sigla_categoria_de_ameaca, bioma)%>%
+      count()
+    
+    bioma_analise_copia %>%
+      ggplot(aes(x = bioma, y = n))+
+      geom_bar(stat = 'identity', fill = '#3c8dbc')+
+      labs(x = "", y = "")+
+      ylim(0,18)+
+      geom_text(aes(label = n), vjust = -.5)+
+      theme(panel.background = element_blank(),
+            panel.grid = element_blank(),
+            axis.ticks = element_blank(),
+            axis.text.y = element_blank())
+
+
+  })
   
   
   ## mapa ----  

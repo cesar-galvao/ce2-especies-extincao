@@ -37,17 +37,13 @@ h4.date { /* Header 4 - and the author and data headers use this too  */
 
 Produzido por César A. Galvão e Khézia Moura para a disciplina Computação em Estatística 2, sob magistério do professor Eduardo Gomes durante o segundo semestre de 2021 na Universidade de Brasília.
 
-## Conteúdo
-
-Para navegar no painel, utilize o menu lateral esquerdo. Os filtros se aplicam  para a aba Página Wiki, que exibe a página da Wikipédia sobre a espécie selecionada. Cabe lembrar que não existe conteúdo para todas as espécies!
-
 ## Motivação
 
 Há muito tempo ouve-se sobre a necessidade de melhorar a conservação do meio ambiente para permitir a existência continuada da espécie humana no planeta e garantir um futuro digno e possível para as gerações futuras.
 
 Nesse sentido, várias iniciativas de órgãos internacionais culminaram em marcos históricos como o Protocolo de Kyoto, o Acordo de Paris ou mesmo em Objetivos de Desenvolvimento do Milênio. Nos dias atuais, ouve-se sobre A Conferência das Nações Unidas sobre as Mudanças Climáticas de 2021 e as necessárias drásticas mudanças  necessárias para evitarmos um colapso ambiental.
 
-Os autores, mobilizados pelo tema, decidiram elaborar um simples painel para consulta de espécies ameaçadas de extinção, tanto fauna quanto flora, registradas pelo Ministério do Meio Ambiente.
+Os autores, mobilizados pelo tema, decidiram elaborar um simples painel para consulta de algumas estatísticas descritivas sobre as espécies ameaçadas de extinção, tanto fauna quanto flora, registradas pelo Ministério do Meio Ambiente.
 
 
 ## Dados
@@ -55,3 +51,47 @@ Os autores, mobilizados pelo tema, decidiram elaborar um simples painel para con
 Os dados utilizados para esse estudo de caso podem ser encontrados na  íntegra no [Portal de Dados Abertos do MMA](http://dados.mma.gov.br/dataset/especies-ameacadas/resource/1f13b062-f3f6-4198-a4c5-3581548bebec). 
 
 Os dados trabalhados, com variáveis selecionados e limpos em formato longo para uso em R podem ser encontrados sob a aba Recursos no menu lateral.
+
+
+## Conteúdo
+
+Para navegar no painel, utilize o menu lateral esquerdo. Os filtros se aplicam em parte para a aba Comparações e para a aba Página Wiki, que exibe a página da Wikipédia sobre a espécie selecionada. Cabe lembrar que não existe conteúdo para todas as espécies!
+
+## Categorias de ameaça
+
+As siglas para categorias de ameaça têm os seguintes significados:
+
+* EX - Extinta
+* EW - Extinta na Natureza 
+* RE - Regionalmente Extinta
+* CR - Criticamente em Perigo
+* EN - Endangered Em Perigo
+* VU - Vulneráveltitle: "Untitled"
+author: "César A. Galvão"
+date: "11/4/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

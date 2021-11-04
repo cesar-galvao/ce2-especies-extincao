@@ -95,6 +95,7 @@ final <- especies_2020_pronto %>% #edixar explicitas as separacoes
   separate_rows(bioma, sep = "\\. ") %>%
   separate_rows(principais_ameacas, sep = ", ") %>% 
   separate_rows(principais_ameacas, sep = " , ") %>%
+  separate_rows(principais_ameacas, sep = ",") %>%
   separate_rows(principais_ameacas, sep = "\\. ") %>%
   separate_rows(estados_de_ocorrencia, sep = " ") %>%
   mutate(bioma = str_remove_all(bioma, pattern = "[:punct:]"))

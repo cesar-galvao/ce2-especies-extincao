@@ -1,0 +1,69 @@
+---
+title: "Painel de dados das espécies brasileiras ameaçadas de extinção"
+author: "César A. Galvão, Khézia Moura"
+subtitle: "CE2 - Professor Eduardo Gomes"
+date: "Brasília, Novembro/2021"
+output:
+  html_document:
+    highlight: textmate
+    number_sections: no
+    theme: flatly
+---
+
+
+<style type="text/css">
+h1.title {
+  font-size: 37px;
+  text-align: center;
+}
+
+h3.subtitle {
+  text-align: center;
+}
+
+h4.author { /* Header 4 - and the author and data headers use this too  */
+  font-size: 18px;
+  text-align: center;
+}
+h4.date { /* Header 4 - and the author and data headers use this too  */
+  font-size: 18px;
+  color: DarkBlue;
+  text-align: center;
+}
+</style>
+
+
+# Painel de dados das espécies brasileiras ameaçadas de extinção
+
+Produzido por César A. Galvão e Khézia Moura para a disciplina Computação em Estatística 2, sob magistério do professor Eduardo Gomes durante o segundo semestre de 2021 na Universidade de Brasília.
+
+## Motivação
+
+Há muito tempo ouve-se sobre a necessidade de melhorar a conservação do meio ambiente para permitir a existência continuada da espécie humana no planeta e garantir um futuro digno e possível para as gerações futuras.
+
+Nesse sentido, várias iniciativas de órgãos internacionais culminaram em marcos históricos como o Protocolo de Kyoto, o Acordo de Paris ou mesmo em Objetivos de Desenvolvimento do Milênio. Nos dias atuais, ouve-se sobre A Conferência das Nações Unidas sobre as Mudanças Climáticas de 2021 e as necessárias drásticas mudanças  necessárias para evitarmos um colapso ambiental.
+
+Os autores, mobilizados pelo tema, decidiram elaborar um simples painel para consulta de algumas estatísticas descritivas sobre as espécies ameaçadas de extinção, tanto fauna quanto flora, registradas pelo Ministério do Meio Ambiente.
+
+
+## Dados
+
+Os dados utilizados para esse estudo de caso podem ser encontrados na  íntegra no [Portal de Dados Abertos do MMA](http://dados.mma.gov.br/dataset/especies-ameacadas/resource/1f13b062-f3f6-4198-a4c5-3581548bebec). 
+
+Os dados trabalhados, com variáveis selecionados e limpos em formato longo para uso em R podem ser encontrados sob a aba Recursos no menu lateral.
+
+
+## Conteúdo
+
+Para navegar no painel, utilize o menu lateral esquerdo. Os filtros se aplicam em parte para a aba Comparações e para a aba Página Wiki, que exibe a página da Wikipédia sobre a espécie selecionada. Cabe lembrar que não existe conteúdo para todas as espécies!
+
+## Categorias de ameaça
+
+As siglas para categorias de ameaça têm os seguintes significados:
+
+* EX - Extinta
+* EW - Extinta na Natureza 
+* RE - Regionalmente Extinta
+* CR - Criticamente em Perigo
+* EN - Endangered Em Perigo
+* VU - Vulnerável
